@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a1c6d53f.css",
+    "main.js": "/static/js/main.054bfdd3.js",
+    "static/media/Activities & The Activity Lifecycle - Android Basics 2023.mp4": "/static/media/Activities & The Activity Lifecycle - Android Basics 2023.378df60622ad50f2722a.mp4",
+    "static/media/people.png": "/static/media/people.3f64f99939fda186a2a8.png",
+    "static/media/peaple-connect.png": "/static/media/peaple-connect.b662366010497f3fda90.png",
+    "static/media/loginp.png": "/static/media/loginp.cb97d4f02f163402bcfc.png",
+    "static/media/sm1.png": "/static/media/sm1.5e69af36d0d055d3cbe1.png",
+    "static/media/mentorship.png": "/static/media/mentorship.2297915b2ffed468fd23.png",
+    "static/media/consultancy.png": "/static/media/consultancy.3fc2176102e707e59e59.png",
+    "static/media/messaging.jpg": "/static/media/messaging.7d12059b109404c12a36.jpg",
+    "static/media/pic.jpg": "/static/media/pic.18f8edfae66506023604.jpg",
+    "static/media/computer.png": "/static/media/computer.277da6ecf115a99a9d51.png",
+    "static/media/female.png": "/static/media/female.a3e8e173f79e15828e4d.png",
+    "index.html": "/index.html",
+    "main.a1c6d53f.css.map": "/static/css/main.a1c6d53f.css.map",
+    "main.054bfdd3.js.map": "/static/js/main.054bfdd3.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a1c6d53f.css",
+    "static/js/main.054bfdd3.js"
+  ]
+}
