@@ -6,11 +6,6 @@
         "use": "@vercel/static-build",
         "config": {}
       }
-    ],
-    "routes": [
-      {
-        "src": "./src/App.js",
-        "dest": "/"
-      }
     ]
+    
   }
