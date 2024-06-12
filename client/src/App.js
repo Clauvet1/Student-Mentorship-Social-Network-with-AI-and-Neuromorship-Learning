@@ -22,81 +22,82 @@ import EditMenteeProfile from './mentee pages/EditMenteeProfile';
 import MentorProfileView from './mentor pages/mentorProfileView';
 import MenteeProfileView from './mentee pages/menteeProfileView';
 
-
-// import Button from 'react-bootstrap/Button';
-
-// or less ideally
-// import { Button } from 'react-bootstrap';
-
-
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 function App() {
   return (
     <UserProvider>
-    <Router>
+      <Router>
         <div className="App">
-        <Navbar />
-        <div className="contents">
-          <Switch>
-            <Route exact path="/">
-              <Home />
-            </Route>
-            <Route path="/aboutUs">
-              <AboutUs />
-            </Route>
-            <Route path="/testimonials">
-              <Testimonials />
-            </Route>
-            <Route path="/mentors">
-              <Mentors />
-            </Route>
-            <Route path="/login">
-              <Login />
-            </Route>
-            <Route path="/signup">
-              <Signup />
-            </Route>
-            <Route path="/menteeProfile">
-              <MenteeProfile />
-            </Route>
-            <Route path="/menteeProfileView/:id">
-              <MenteeProfileView />
-            </Route>
-            <Route path="/mentorProfile">
-              <MentorProfile />
-            </Route>
-            <Route path="/mentorProfileView/:id">
-              <MentorProfileView />
-            </Route>
-            <Route path="/faq">
-              <FAQ />
-            </Route>
-            <Route path="/resources">
-              <Resources />
-            </Route>
-            <Route path="/mentees">
-              <Mentees />
-            </Route>
-            <Route path="/feedback">
-              <Feedback />
-            </Route>
-            <Route path="/message/:id">
-              <Message/>
-            </Route>
-            <Route path="/editMProfile">
-              <EditMProfile/>
-            </Route>
-            <Route path="/editMenteeProfile">
-              <EditMenteeProfile/>
-            </Route>
-          </Switch>
+          <Navbar />
+          <div className="contents">
+            <Switch>
+              <Route exact path="/">
+                <Home />
+              </Route>
+              <Route path="/aboutUs">
+                <AboutUs />
+              </Route>
+              <Route path="/testimonials">
+                <Testimonials />
+              </Route>
+              <Route path="/mentors">
+                <Mentors />
+              </Route>
+              <Route path="/login">
+                <Login />
+              </Route>
+              <Route path="/signup">
+                <Signup />
+              </Route>
+              <Route path="/menteeProfile">
+                <MenteeProfile />
+              </Route>
+              <Route path="/menteeProfileView/:id">
+                <MenteeProfileView />
+              </Route>
+              <Route path="/mentorProfile">
+                <MentorProfile />
+              </Route>
+              <Route path="/mentorProfileView/:id">
+                <MentorProfileView />
+              </Route>
+              <Route path="/faq">
+                <FAQ />
+              </Route>
+              <Route path="/resources">
+                <Resources />
+              </Route>
+              <Route path="/mentees">
+                <Mentees />
+              </Route>
+              <Route path="/feedback">
+                <Feedback />
+              </Route>
+              <Route path="/message/:id">
+                <Message/>
+              </Route>
+              <Route path="/editMProfile">
+                <EditMProfile/>
+              </Route>
+              <Route path="/editMenteeProfile">
+                <EditMenteeProfile/>
+              </Route>
+            </Switch>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-        </div>
-    </Router>
+      </Router>
     </UserProvider>
   );
 }
 
 export default App;
 
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
