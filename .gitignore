@@ -1,0 +1,10 @@
+# Node
+client/node_modules
+client/build
+npm-debug.log
+
+# Python
+server/venv
+__pycache__/
+*.pyc
+.env

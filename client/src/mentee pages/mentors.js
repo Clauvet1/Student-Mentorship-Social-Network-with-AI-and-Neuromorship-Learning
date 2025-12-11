@@ -5,6 +5,7 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import profileA from '../assets/images/computer.png';
 import profileB from '../assets/images/female.png';
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { Modal, Button } from 'react-bootstrap';
 
 const mentorImages = [profileA, profileB];
 
@@ -13,9 +14,10 @@ const Mentors = () => {
   const [error, setError] = useState(null);
   const token = localStorage.getItem('token');
   const history = useHistory();
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    if(!token){
+    if (!token) {
       history.push('./login');
     }
     const fetchMentorData = async () => {
@@ -34,6 +36,29 @@ const Mentors = () => {
 
     fetchMentorData();
   }, [history, token]);
+
+  const addMentor = async (mentorId) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/add-mentor/${mentorId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Unable to add mentor');
+      }
+      console.log('Mentor added successfully!');
+      setShowAlert(true);
+    } catch (error) {
+      console.error('Error adding mentor:', error);
+    }
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
 
   return (
     <div className="mentorContent my-5">
@@ -63,12 +88,27 @@ const Mentors = () => {
                       <button id='mView' className='btn text-white rounded-5 px-4 mt-2'>View Profile</button>
                     </Link>
                   <Link className="btn btn-secondary rounded-5 text-white ms-2 mt-2 ml-3" to={`/message/${mentor.id}`}><FontAwesomeIcon icon={faEnvelope} /> message</Link>
+                 <button id='messagebtn' className="btn rounded-5 text-white mt-2 ms-2" onClick={() => addMentor(mentor.id)}>Add Mentor</button>
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
+       
+      {showAlert && (
+        <Modal show={showAlert} onHide={handleCloseAlert}>
+          <Modal.Header closeButton>
+            <Modal.Title>Mentor Added</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Mentor added successfully!</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button id='messagebtn' className="btn rounded-5 text-white mt-3 ms-4" onClick={handleCloseAlert}>Close</Button>
+          </Modal.Footer>
+</Modal>
+      )}
     </div>
   );
 }

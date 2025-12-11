@@ -24,6 +24,8 @@ import MenteeProfileView from './mentee pages/menteeProfileView';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import MyMentors from './mentee pages/myMentors';
+import MyMentees from './mentor pages/myMentees';
 
 function App() {
   return (
@@ -44,6 +46,12 @@ function App() {
               </Route>
               <Route path="/mentors">
                 <Mentors />
+              </Route>
+              <Route path="/my-mentors">
+                <MyMentors />
+              </Route>
+              <Route path="/my-mentees">
+                <MyMentees />
               </Route>
               <Route path="/login">
                 <Login />

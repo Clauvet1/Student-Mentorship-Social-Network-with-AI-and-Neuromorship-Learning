@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faLanguage, faLocationDot, faPhone, faVoicemail, faEdit} from '@fortawesome/free-solid-svg-icons'
+import { faLanguage, faLocationDot, faPhone, faVoicemail, faEdit, faPeopleArrows} from '@fortawesome/free-solid-svg-icons'
 import amIMG from '../assets/images/female.png';
 import { useHistory } from "react-router-dom";
 
@@ -99,6 +99,20 @@ const MentorProfile = () => {
                         </div>
                         <div className="col-lg-4">
                             <Link id='messagebtn' className='btn rounded-5 text-white mt-3 ms-4' to = '/editMprofile'>Edit Profile</Link>
+                        </div>
+                    </div>
+                </div>
+                <div className="messageMentor">
+                    <div className="row">
+                        <div className="col-lg-2">
+                            <FontAwesomeIcon className='icon-large w-100 mt-3 mb-2' icon={faPeopleArrows} />
+                        </div>
+                        <div className='col-lg-6'>
+                            <h4>View Mentees</h4>
+                            <p>Yo can all your mentees here</p>
+                        </div>
+                        <div className="col-lg-4">
+                            <Link id='messagebtn' className='btn rounded-5 text-white mt-3 ms-4' to='/my-mentees'>My Mentees</Link>
                         </div>
                     </div>
                 </div>
