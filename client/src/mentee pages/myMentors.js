@@ -21,11 +21,11 @@ const MyMentors = () => {
     try {
       const token = localStorage.getItem("token");
 
-      if (!token) {
-        history.push("/login");
-        console.log("token missing");
-        return;
-      }
+      // if (!token) {
+      //   history.push("/login");
+      //   console.log("token missing");
+      //   return;
+      // }
 
       const response = await fetch("http://localhost:3001/api/my-mentors", {
         method: "GET",

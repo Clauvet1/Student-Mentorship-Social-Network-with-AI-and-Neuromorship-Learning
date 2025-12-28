@@ -17,9 +17,9 @@ const Mentors = () => {
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    if (!token) {
-      history.push('./login');
-    }
+    // if (!token) {
+    //   history.push('./login');
+    // }
     const fetchMentorData = async () => {
       try {
         const response = await fetch('http://localhost:3001/api/mentors');

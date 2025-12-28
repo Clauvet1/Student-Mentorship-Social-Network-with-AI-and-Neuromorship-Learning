@@ -22,10 +22,10 @@ const EditMenteeProfile = () => {
         try {
 
             const token = localStorage.getItem("token")
-            if(!token){
-                history.push("/login");
-                console.log("token missing");
-            }
+            // if(!token){
+            //     history.push("/login");
+            //     console.log("token missing");
+            // }
             const response = await fetch("http://localhost:3001/api/editMenteeProfile", {
                 method: "PUT",
                 headers: {
