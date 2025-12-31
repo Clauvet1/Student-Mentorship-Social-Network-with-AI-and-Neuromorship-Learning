@@ -4,7 +4,7 @@ import SMM from './assets/images/peaple-connect.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLanguage, faMapLocation, faCalendarWeek, faCircleNodes, faCheckDouble} from '@fortawesome/free-solid-svg-icons'
 import { faFacebookMessenger} from '@fortawesome/free-brands-svg-icons'
-import { Link } from 'react-router-dom/cjs/react-router-dom.min'
+import { Link } from 'react-router-dom'
 const Home = () => {
     return ( 
         <div className="main">

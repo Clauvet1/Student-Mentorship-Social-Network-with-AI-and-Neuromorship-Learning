@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import profileA from '../assets/images/computer.png';
 import profileB from '../assets/images/female.png';
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useNavigate } from "react-router-dom";
 import { Modal, Button } from 'react-bootstrap';
 
 const mentorImages = [profileA, profileB];
@@ -13,12 +13,12 @@ const Mentors = () => {
   const [mentorData, setMentorData] = useState([]);
   const [error, setError] = useState(null);
   const token = localStorage.getItem('token');
-  const history = useHistory();
+  const navigate = useNavigate();
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
     // if (!token) {
-    //   history.push('./login');
+    //   navigate('./login');
     // }
     const fetchMentorData = async () => {
       try {
@@ -35,7 +35,7 @@ const Mentors = () => {
     };
 
     fetchMentorData();
-  }, [history, token]);
+  }, [navigate, token]);
 
   const addMentor = async (mentorId) => {
     try {

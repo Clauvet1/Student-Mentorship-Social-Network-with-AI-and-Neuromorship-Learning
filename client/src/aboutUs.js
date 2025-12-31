@@ -3,7 +3,7 @@ import { faWhatsapp, faGithub, faXTwitter, faInstagram, faFacebook} from "@forta
 import user1 from './assets/images/pic.jpg'
 import people from './assets/images/people.png'
 import aboutVideo from './assets/videos/Activities & The Activity Lifecycle - Android Basics 2023.mp4'
-import { Link } from 'react-router-dom/cjs/react-router-dom.min';
+import { Link } from 'react-router-dom';
 const AboutUs = () => {
     return ( 
         <div className="aboutUs">

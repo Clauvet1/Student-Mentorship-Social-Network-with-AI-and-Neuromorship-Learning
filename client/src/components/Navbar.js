@@ -1,68 +1,49 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/images/sm1.png";
-import { useHistory } from "react-router-dom";
 import { UserContext } from "../Usercontext";
-import {jwtDecode} from 'jwt-decode';
-import profile from '../assets/images/consultancy.png';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import { jwtDecode } from "jwt-decode";
+import profile from "../assets/images/consultancy.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
   const { isLoggedIn, logout } = useContext(UserContext);
-  const history = useHistory();
-  const [userType, setUserType] = useState('');
-  const [userName, setUserName] = useState('');
-  const [email, setEmail] = useState('');
+  const navigate = useNavigate();
+  const [userType, setUserType] = useState("");
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
+      const response = await fetch("http://localhost:3001/api/logout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
       });
 
       if (response.ok) {
         logout();
         localStorage.removeItem("token");
-        history.push("/login");
-      } else {
-        throw new Error('Logout failed');
+        navigate("/login");
       }
     } catch (error) {
       console.error(error);
     }
   };
-  
+
   useEffect(() => {
     if (isLoggedIn) {
-      const decodeToken = async () => {
-        const token = localStorage.getItem("token");
-        
-        if (!token) {
-          history.push("/login");
-          console.log("token missing");
-        } else {
-          const decodedToken = jwtDecode(token);
-          console.log('token frontend: ', decodedToken);
-          const userType = decodedToken.claims?.userType;
-          const userName = decodedToken.claims?.userName;
-          const email = decodedToken.claims?.email;
-          console.log("Logged in user's type:", userType);
-          console.log("Logged in user's name:", userName);
-          console.log("Logged in user's email:", email);
-          setUserType(userType);
-          setUserName(userName);
-          setEmail(email)
-        }
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+      } else {
+        const decoded = jwtDecode(token);
+        setUserType(decoded.claims?.userType);
+        setUserName(decoded.claims?.userName);
+        setEmail(decoded.claims?.email);
       }
-      
-      decodeToken();
     }
-  }, [history, isLoggedIn])
- 
+  }, [navigate, isLoggedIn]);
 
   return (
     <div className="bar shadow-lg rounded-5 p-1 fw-bold">

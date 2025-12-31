@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const EditMenteeProfile = () => {
     const [fullName, setFullName] = useState('');
@@ -12,7 +12,7 @@ const EditMenteeProfile = () => {
     const [skills, setSkills] = useState('');
     const [department, setDepartment] = useState('');
     const [bio, setBio] = useState('');
-    const history = useHistory();
+    const navigate = useNavigate();
 
 
     const handleSubmit = async (event) => {
@@ -23,7 +23,7 @@ const EditMenteeProfile = () => {
 
             const token = localStorage.getItem("token")
             // if(!token){
-            //     history.push("/login");
+            //     navigate("/login);
             //     console.log("token missing");
             // }
             const response = await fetch("http://localhost:3001/api/editMenteeProfile", {
@@ -37,7 +37,7 @@ const EditMenteeProfile = () => {
             if (response.ok) {
                 console.log("User data sent successfully to server");
                
-                history.push("/menteeProfile");
+                navigate("/menteeProfile");
                 
             } else {
                 console.log("Failed to send user's data to server")

@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLanguage, faLocationDot, faMessage, faPhone, faVoicemail} from '@fortawesome/free-solid-svg-icons'
 import amIMG from '../assets/images/female.png';
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 
 const MentorProfileView = () => {
     const [userData, setUserData] = useState("");
-    const history = useHistory();
+    const navigate = useNavigate();
     const {id: menteeId} = useParams();
 
     useEffect(() => {

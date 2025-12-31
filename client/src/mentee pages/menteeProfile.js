@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLanguage, faLocationDot, faPhone, faVoicemail, faEdit, faPeopleArrows } from '@fortawesome/free-solid-svg-icons';
 import amIMG from '../assets/images/consultancy.png';
@@ -11,7 +11,7 @@ const MenteeProfile = () => {
     const [matchingMentors, setMatchingMentors] = useState([]);
     const [showModal, setShowModal] = useState(true);
     const [showAlert, setShowAlert] = useState(false);
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchProfileData();
@@ -22,7 +22,7 @@ const MenteeProfile = () => {
             const token = localStorage.getItem("token");
 
             // if (!token) {
-            //     history.push("/login");
+            //     navigate("/login");
             //     console.log("token missing");
             //     return;
             // }

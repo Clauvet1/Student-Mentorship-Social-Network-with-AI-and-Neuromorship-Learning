@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import loginImage from "./assets/images/female.png"
 
 const Signup = () => {
@@ -8,7 +8,8 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [specialty, setSpecialty] = useState(""); 
-  const history = useHistory();
+  const navigate = useNavigate();
+
 
   const handleUserTypeChange = (type) => {
     setUserType(type);
@@ -31,7 +32,7 @@ const Signup = () => {
       });
       if (response.ok) {
         console.log("User data sent successfully to the server");
-        history.push("/login");
+        navigate("/login");
       } else {
         console.error("Failed to send user data to the server");
       }

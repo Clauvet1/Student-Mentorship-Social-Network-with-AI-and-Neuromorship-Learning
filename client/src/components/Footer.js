@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWhatsapp, faGithub, faXTwitter, faInstagram, faFacebook} from "@fortawesome/free-brands-svg-icons";
-import { Link } from 'react-router-dom/cjs/react-router-dom.min';
+import { Link } from 'react-router-dom';
 const Footer = () => {
     return ( 
         <div className="footer">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Card, CardGroup, Button } from 'react-bootstrap';
 import profileA from '../assets/images/computer.png';
@@ -11,8 +11,7 @@ const mentorImages = [profileA, profileB];
 
 const MyMentees = () => {
   const [mentees, setMentees] = useState([]);
-  const history = useHistory();
-
+  const navigate = useNavigate();
   useEffect(() => {
     fetchMentors();
   }, []);
@@ -22,7 +21,7 @@ const MyMentees = () => {
       const token = localStorage.getItem("token");
 
       // if (!token) {
-      //   history.push("/login");
+      //   navigate("/login");
       //   console.log("token missing");
       //   return;
       // }

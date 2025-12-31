@@ -4,7 +4,7 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import profileA from '../assets/images/consultancy.png';
 import profileB from '../assets/images/mentorship.png';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { useNavigate } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
 
 const menteeImages = [profileA, profileB];
@@ -12,13 +12,13 @@ const menteeImages = [profileA, profileB];
 const Mentees = () => {
   const [menteeData, setMenteeData] = useState([]);
   const [error, setError] = useState(null);
-  const history = useHistory();
+  const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
     // if (!token) {
-    //   history.push('./login');
+    //   navigate('./login');
     // }
     const fetchMenteeData = async () => {
       try {
@@ -35,7 +35,7 @@ const Mentees = () => {
     };
 
     fetchMenteeData();
-  }, [history, token]);
+  }, [navigate, token]);
 
   const addMentee = async (menteeId) => {
     try {
