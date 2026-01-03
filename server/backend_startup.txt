@@ -1,0 +1,13 @@
+1.source venv/bin/activate
+2.start mongod
+3.uvicorn main:app --reload --port 3001
+
+#For mongodb
+
+RUN###
+1.mongo
+2.show dbs
+3.use database_name    #(to enter a database)
+4.show collections  #to show tables
+5.db.messages.find()    #to see data in collections
+6.db.messages.find().pretty()   #can petty is data's to long

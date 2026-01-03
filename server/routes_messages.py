@@ -4,10 +4,15 @@ from models import Message
 
 router = APIRouter(prefix="/api/messages")
 
+
 @router.post("/send")
-def send_message(msg: Message):
-    messages.insert_one(msg.dict())
-    return {"status": "Message sent"}
+def send_message(msg: "Message"):
+    result = messages.insert_one(msg.model_dump())
+    saved_message = msg.model_dump()
+    saved_message["_id"] = str(result.inserted_id)
+    saved_message["timestamp"] = saved_message["timestamp"].isoformat()
+    return saved_message
+
 
 @router.get("/{user1}/{user2}")
 def get_messages(user1: str, user2: str):
@@ -18,4 +23,11 @@ def get_messages(user1: str, user2: str):
         ]
     }).sort("timestamp", 1)
 
-    return list(chat)
+    chat_list = []
+
+    for msg in chat:
+        msg["_id"] = str(msg["_id"])
+        msg["timestamp"] = msg["timestamp"].isoformat()
+        chat_list.append(msg)
+
+    return chat_list
