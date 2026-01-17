@@ -1,0 +1,143 @@
+import React, { useEffect, useState } from "react";
+import ChatList from "./components/messaging_components/list/chat_list";
+import Chat from "./components/messaging_components/chat/chat";
+import ChatDetail from "./components/messaging_components/detail/chat_detail";
+
+const ChatPage = () => {
+  const [contacts, setContacts] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [myId, setMyId] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    // Check for user parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const userParam = urlParams.get("user");
+
+    // Fetch current user info
+    fetch("http://localhost:3001/api/me", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        setMyId(data._id);
+        // Fetch contacts based on role
+        fetchContacts(data.role, token, userParam);
+      })
+      .catch(err => {
+        console.error("Error fetching current user:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  const fetchContacts = (role, token, userParam = null) => {
+    const endpoint = role === "mentor" ? "/my-mentees" : "/my-mentors";
+    fetch(`http://localhost:3001/api${endpoint}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        setContacts(data);
+        
+        // If a user parameter was passed, try to select that user
+        if (userParam) {
+          const targetUser = data.find(c => c._id === userParam);
+          if (targetUser) {
+            setSelectedUser(targetUser);
+          }
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error fetching contacts:", err);
+        setLoading(false);
+      });
+  };
+
+  // Refresh contacts when a new mentorship is created
+  const refreshContacts = () => {
+    const token = localStorage.getItem("token");
+    fetch("http://localhost:3001/api/me", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        setMyId(data._id);
+        fetchContacts(data.role, token);
+      })
+      .catch(err => console.error("Error refreshing contacts:", err));
+  };
+
+  if (loading) {
+    return (
+      <div className="d-flex align-items-center justify-content-center h-100">
+        <div className="text-center">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-2">Loading contacts...</p>
+        </div>
+    );
+  }
+
+  return (
+    <div className="chat-page-container" style={{ height: "calc(100vh - 100px)" }}>
+      <div className="row h-100 m-0">
+        {/* Left Section - Contacts List (My Mentors/My Mentees) */}
+        <div className="col-3 chat-list-section border-end">
+          <div className="p-3 bg-light border-bottom">
+            <h5 className="m-0">
+              My {contacts.length > 0 
+                ? (contacts[0].role === 'mentor' ? 'Mentees' : 'Mentors')
+                : ''}
+            </h5>
+            <small className="text-muted">Active connections</small>
+          </div>
+          <ChatList 
+            contacts={contacts} 
+            onSelect={setSelectedUser} 
+            selectedUser={selectedUser}
+          />
+        </div>
+
+        {/* Center Section - Chat Conversation */}
+        <div className="col-6 chat-section border-end">
+          {selectedUser ? (
+            <Chat 
+              myId={myId} 
+              otherUser={selectedUser} 
+              onMessageSent={refreshContacts}
+            />
+          ) : (
+            <div className="d-flex align-items-center justify-content-center h-100">
+              <div className="text-center text-muted">
+                <i className="fas fa-comments fa-3x mb-3"></i>
+                <p className="mb-0">
+                  Select a {contacts.length > 0 && contacts[0].role === 'mentor' ? 'mentee' : 'mentor'} 
+                  to start chatting
+                </p>
+                <small>Only connected mentors/mentees appear here</small>
+              </div>
+          )}
+        </div>
+
+        {/* Right Section - User Details */}
+        <div className="col-3 chat-detail-section">
+          {selectedUser ? (
+            <ChatDetail activeUser={selectedUser} />
+          ) : (
+            <div className="d-flex align-items-center justify-content-center h-100">
+              <div className="text-center text-muted">
+                <i className="fas fa-user fa-2x mb-2"></i>
+                <p>Select a user to view details</p>
+              </div>
+          )}
+        </div>
+    </div>
+  );
+};
+
+export default ChatPage;

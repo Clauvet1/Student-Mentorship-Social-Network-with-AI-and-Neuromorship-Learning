@@ -14,21 +14,10 @@ const Navbar = () => {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch("http://localhost:3001/api/logout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (response.ok) {
-        logout();
-        localStorage.removeItem("token");
-        navigate("/login");
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  const handleLogout = () => {
+    logout();
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   useEffect(() => {

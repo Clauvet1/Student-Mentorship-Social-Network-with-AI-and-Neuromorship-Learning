@@ -15,11 +15,10 @@ const Mentors = () => {
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
   const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [buttonStates, setButtonStates] = useState({}); // Track button state per mentor
 
   useEffect(() => {
-    // if (!token) {
-    //   navigate('./login');
-    // }
     const fetchMentorData = async () => {
       try {
         const response = await fetch('http://localhost:3001/api/mentors');
@@ -28,6 +27,9 @@ const Mentors = () => {
         }
         const data = await response.json();
         setMentorData(data);
+        
+        // Check which mentors user has already requested
+        checkExistingRequests(data);
       } catch (error) {
         console.error('Error fetching mentors:', error);
         setError(error.message);
@@ -37,22 +39,51 @@ const Mentors = () => {
     fetchMentorData();
   }, [navigate, token]);
 
-  const addMentor = async (mentorId) => {
+  const checkExistingRequests = async (mentors) => {
+    if (!token) return;
+    
     try {
-      const response = await fetch(`http://localhost:3001/api/add-mentor/${mentorId}`, {
+      const response = await fetch('http://localhost:3001/api/my-requests', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const requests = await response.json();
+      
+      const states = {};
+      requests.forEach(req => {
+        states[req.mentor_id] = { status: req.status, requestId: req._id };
+      });
+      setButtonStates(states);
+    } catch (err) {
+      console.error('Error checking requests:', err);
+    }
+  };
+
+  const requestMentorship = async (mentorId) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/request-mentorship/${mentorId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
+      
       if (!response.ok) {
-        throw new Error('Unable to add mentor');
+        const error = await response.json();
+        throw new Error(error.detail || 'Unable to send request');
       }
-      console.log('Mentor added successfully!');
+      
+      setAlertMessage("Mentorship request sent successfully!");
       setShowAlert(true);
+      
+      // Update button state
+      setButtonStates(prev => ({
+        ...prev,
+        [mentorId]: { status: 'pending' }
+      }));
     } catch (error) {
-      console.error('Error adding mentor:', error);
+      console.error('Error sending request:', error);
+      alert(error.message);
     }
   };
 
@@ -60,11 +91,29 @@ const Mentors = () => {
     setShowAlert(false);
   };
 
+  const goToChat = (mentorId) => {
+    navigate(`/chat_page?user=${mentorId}`);
+  };
+
+  const getButtonText = (mentorId) => {
+    const state = buttonStates[mentorId];
+    if (!state) return "Request Mentorship";
+    if (state.status === 'pending') return "Request Pending";
+    if (state.status === 'accepted') return "Connected";
+    if (state.status === 'rejected') return "Request Again";
+    return "Request Mentorship";
+  };
+
+  const isButtonDisabled = (mentorId) => {
+    const state = buttonStates[mentorId];
+    return state && (state.status === 'pending' || state.status === 'accepted');
+  };
+
   return (
     <div className="mentorContent my-5">
       {error && <div className="alert alert-danger">{error}</div>}
       <div className="filter ms-5 fw-bold">
-        <div className='mx-5'> <input  type="checkbox" name="" id="" /> Lecturers</div>
+        <div className='mx-5'> <input type="checkbox" name="" id="" /> Lecturers</div>
         <div> <input type="checkbox" name="" id="" /> Atrium</div>
       </div>
       <div className="student-mentor-matching mt-5">
@@ -81,36 +130,51 @@ const Mentors = () => {
               </div>
               <div className="col-lg-9 p-4">
                 <div className="container">
-                    <h2>{mentor.fullName}</h2>
-                    <h5 className="mColor">{mentor.specialty}</h5>
-                    <p>{mentor.bio}</p>
-                    <Link to={`/mentorProfileView/${mentor.id}`}>
-                      <button id='mView' className='btn text-white rounded-5 px-4 mt-2'>View Profile</button>
-                    </Link>
-                  <Link className="btn btn-secondary rounded-5 text-white ms-2 mt-2 ml-3" to={`/message/${mentor.id}`}><FontAwesomeIcon icon={faEnvelope} /> message</Link>
-                 <button id='messagebtn' className="btn rounded-5 text-white mt-2 ms-2" onClick={() => addMentor(mentor.id)}>Add Mentor</button>
+                  <h2>{mentor.fullName}</h2>
+                  <h5 className="mColor">{mentor.specialty}</h5>
+                  <p>{mentor.bio}</p>
+                  <Link to={`/mentorProfileView/${mentor.id}`}>
+                    <button id='mView' className='btn text-white rounded-5 px-4 mt-2'>View Profile</button>
+                  </Link>
+                  <button 
+                    id='messagebtn' 
+                    className="btn rounded-5 text-white mt-2 ms-2"
+                    onClick={() => goToChat(mentor.id)}
+                  >
+                    <FontAwesomeIcon icon={faEnvelope} /> Message
+                  </button>
+                  <button 
+                    id='messagebtn' 
+                    className="btn rounded-5 text-white mt-2 ms-2"
+                    onClick={() => requestMentorship(mentor.id)}
+                    disabled={isButtonDisabled(mentor.id)}
+                    style={isButtonDisabled(mentor.id) ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
+                  >
+                    {getButtonText(mentor.id)}
+                  </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
-       
+
       {showAlert && (
         <Modal show={showAlert} onHide={handleCloseAlert}>
           <Modal.Header closeButton>
-            <Modal.Title>Mentor Added</Modal.Title>
+            <Modal.Title>Mentorship Request</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p>Mentor added successfully!</p>
+            <p>{alertMessage}</p>
           </Modal.Body>
           <Modal.Footer>
             <Button id='messagebtn' className="btn rounded-5 text-white mt-3 ms-4" onClick={handleCloseAlert}>Close</Button>
           </Modal.Footer>
-</Modal>
+        </Modal>
       )}
     </div>
   );
-}
+};
 
 export default Mentors;
+
