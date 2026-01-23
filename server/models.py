@@ -14,7 +14,7 @@ class User(BaseModel):
     name: str
     email: EmailStr
     password: str
-    role: str  # mentor / mentee
+    role: str  # mentor / student
     specialty: str = ""
     bio: str = ""
     created_at: datetime = Field(default_factory=datetime.utcnow)

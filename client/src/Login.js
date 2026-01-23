@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from "./Usercontext";
+import { getApiUrl } from "./config";
 import loginImage from "./assets/images/loginp.png";
 
 const Login = () => {
@@ -13,7 +14,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:3001/api/login", {
+      const res = await fetch(getApiUrl("/api/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -29,11 +30,16 @@ const Login = () => {
       localStorage.setItem("token", data.token);
       login();
 
+      // Decode JWT to get user role
       const payload = JSON.parse(atob(data.token.split(".")[1]));
-
-      payload.role === "mentor"
-        ? navigate("/mentorProfile")
-        : navigate("/menteeProfile");
+      const userRole = payload.role || "";
+      
+      // Redirect based on role
+      if (userRole === "mentor") {
+        navigate("/mentorProfile");
+      } else {
+        navigate("/studentProfile");
+      }
     } catch (err) {
       alert("Server error");
     }

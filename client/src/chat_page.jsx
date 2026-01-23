@@ -7,13 +7,14 @@ import { getApiUrl, getAuthHeaders, apiFetch } from "./config";
 const ChatPage = () => {
   const [contacts, setContacts] = useState([]);
   const [allMentors, setAllMentors] = useState([]); // All available mentors
+  const [allStudents, setAllStudents] = useState([]); // All available students (for mentors)
   const [selectedUser, setSelectedUser] = useState(null);
   const [myId, setMyId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [directUser, setDirectUser] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
-  const [showAllMentors, setShowAllMentors] = useState(true); // Default to showing all mentors for mentees
+  const [showAllUsers, setShowAllUsers] = useState(true); // Default to showing all users
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -66,10 +67,16 @@ const ChatPage = () => {
           fetchContacts(data.role, token);
         }
         
-        // Always fetch all mentors - mentees can message any mentor
-        if (data.role === "mentee") {
+        // Fetch all mentors - students can message any mentor
+        if (data.role === "student") {
           fetchAllMentors(token);
-          setShowAllMentors(true); // Default to showing all mentors
+          setShowAllUsers(true); // Default to showing all mentors
+        }
+        
+        // Fetch all students - mentors can message any student
+        if (data.role === "mentor") {
+          fetchAllStudents(token);
+          setShowAllUsers(true); // Default to showing all students
         }
       })
       .catch(err => {
@@ -109,6 +116,34 @@ const ChatPage = () => {
       });
   };
 
+  const fetchAllStudents = (token) => {
+    console.log("Fetching all students...");
+    fetch(getApiUrl("/api/users"), {
+      headers: getAuthHeaders()
+    })
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        console.log("All users fetched:", data);
+        // Filter to only students/mentees and convert to consistent format
+        const formattedStudents = data
+          .filter(user => user.role === "student" || user.role === "mentee")
+          .map(student => ({
+            ...student,
+            _id: student._id || student.id,
+            role: student.role,
+            isDirect: true // Mark as available for direct messaging
+          }));
+        setAllStudents(formattedStudents);
+      })
+      .catch(err => {
+        console.error("Error fetching all students:", err);
+        setError("Failed to load students list");
+      });
+  };
+
   const fetchDirectUser = (userId, token) => {
     console.log("Fetching direct user:", userId);
     // For direct messaging, we don't need to check if they're in contacts
@@ -141,8 +176,9 @@ const ChatPage = () => {
 
   const fetchContacts = (role, token) => {
     console.log("Fetching contacts for role:", role);
-    const endpoint = role === "mentor" ? "/my-mentees" : "/my-mentors";
-    fetch(getApiUrl(`/api${endpoint}`), {
+    // Use /api/active-mentorships which properly queries the mentorships collection
+    const endpoint = "/api/active-mentorships";
+    fetch(getApiUrl(endpoint), {
       headers: getAuthHeaders()
     })
       .then(res => {
@@ -150,14 +186,32 @@ const ChatPage = () => {
         return res.json();
       })
       .then(data => {
-        console.log("Contacts data:", data);
+        console.log("Active mentorships/contacts data:", data);
         setContacts(data);
         setLoading(false);
       })
       .catch(err => {
         console.error("Error fetching contacts:", err);
-        setError(err.message || "Failed to load your connections");
-        setLoading(false);
+        // Fallback to old endpoints if active-mentorships fails
+        console.log("Falling back to old endpoint...");
+        const fallbackEndpoint = role === "mentor" ? "/my-mentees" : "/my-mentors";
+        fetch(getApiUrl(`/api${fallbackEndpoint}`), {
+          headers: getAuthHeaders()
+        })
+          .then(res => {
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            return res.json();
+          })
+          .then(data => {
+            console.log("Fallback contacts data:", data);
+            setContacts(data);
+            setLoading(false);
+          })
+          .catch(fallbackErr => {
+            console.error("Error fetching fallback contacts:", fallbackErr);
+            setError(fallbackErr.message || "Failed to load your connections");
+            setLoading(false);
+          });
       });
   };
 
@@ -166,8 +220,8 @@ const ChatPage = () => {
     const token = localStorage.getItem("token");
     if (!token || !currentUser) return;
     
-    const endpoint = currentUser.role === "mentor" ? "/my-mentees" : "/my-mentors";
-    fetch(getApiUrl(`/api${endpoint}`), {
+    // Use active-mentorships endpoint
+    fetch(getApiUrl("/api/active-mentorships"), {
       headers: getAuthHeaders()
     })
       .then(res => res.json())
@@ -177,7 +231,19 @@ const ChatPage = () => {
       })
       .catch(err => {
         console.error("Error refreshing contacts:", err);
-        setError("Failed to refresh contacts");
+        // Fallback
+        const fallbackEndpoint = currentUser.role === "mentor" ? "/my-mentees" : "/my-mentors";
+        fetch(getApiUrl(`/api${fallbackEndpoint}`), {
+          headers: getAuthHeaders()
+        })
+          .then(res => res.json())
+          .then(data => {
+            console.log("Fallback contacts refreshed:", data);
+            setContacts(data);
+          })
+          .catch(fallbackErr => {
+            console.error("Error refreshing fallback contacts:", fallbackErr);
+          });
       });
   };
 
@@ -187,7 +253,7 @@ const ChatPage = () => {
   };
 
   const toggleView = () => {
-    setShowAllMentors(!showAllMentors);
+    setShowAllUsers(!showAllUsers);
   };
 
   const handleRetry = () => {
@@ -198,6 +264,10 @@ const ChatPage = () => {
 
   const handleBrowseMentors = () => {
     window.location.href = "/mentors";
+  };
+
+  const handleBrowseStudents = () => {
+    window.location.href = "/students";
   };
 
   if (loading) {
@@ -228,22 +298,32 @@ const ChatPage = () => {
     );
   }
 
-  const displayContacts = showAllMentors && currentUser?.role === "mentee" 
-    ? allMentors 
+  const displayContacts = showAllUsers 
+    ? (currentUser?.role === "student" ? allMentors : allStudents)
     : contacts;
 
   const getHeaderTitle = () => {
     if (directUser) return 'Direct Message';
-    if (showAllMentors) return 'All Mentors';
+    if (showAllUsers) return currentUser?.role === "student" ? 'All Mentors' : 'All Students';
     const hasContacts = contacts.length > 0;
     if (!hasContacts) return 'Connections';
-    return `My ${contacts[0].role === 'mentor' ? 'Mentors' : 'Mentees'}`;
+    return `My ${currentUser?.role === "mentor" ? 'Students' : 'Mentors'}`;
   };
 
   const getHeaderSubtitle = () => {
     if (directUser) return 'Starting new conversation';
-    if (showAllMentors) return 'Browse all available mentors';
+    if (showAllUsers) return currentUser?.role === "student" 
+      ? 'Browse all available mentors' 
+      : 'Browse all students';
     return 'Your active connections';
+  };
+
+  const getBrowseLink = () => {
+    return currentUser?.role === "student" ? '/mentors' : '/students';
+  };
+
+  const getBrowseText = () => {
+    return currentUser?.role === "student" ? 'Browse Mentors' : 'Browse Students';
   };
 
   return (
@@ -257,14 +337,18 @@ const ChatPage = () => {
                 <h5 className="m-0">{getHeaderTitle()}</h5>
                 <small className="text-muted">{getHeaderSubtitle()}</small>
               </div>
-              {currentUser?.role === "mentee" && contacts.length > 0 && (
+              {contacts.length > 0 && (
                 <button 
                   className="btn btn-sm btn-outline-primary chat-view-toggle"
                   onClick={toggleView}
-                  title={showAllMentors ? "Show My Mentors" : "Show All Mentors"}
+                  title={showAllUsers 
+                    ? (currentUser?.role === "student" ? "Show My Mentors" : "Show My Students") 
+                    : (currentUser?.role === "student" ? "Show All Mentors" : "Show All Students")}
                 >
-                  <i className={`fas ${showAllMentors ? 'fa-user-friends' : 'fa-users'} me-1`}></i>
-                  {showAllMentors ? 'My Mentors' : 'All'}
+                  <i className={`fas ${showAllUsers ? 'fa-user-friends' : 'fa-users'} me-1`}></i>
+                  {showAllUsers 
+                    ? (currentUser?.role === "student" ? 'My Mentors' : 'My Students') 
+                    : (currentUser?.role === "student" ? 'All' : 'All')}
                 </button>
               )}
             </div>
@@ -277,14 +361,16 @@ const ChatPage = () => {
             contacts={displayContacts} 
             onSelect={handleSelectUser} 
             selectedUser={selectedUser}
-            isMentee={currentUser?.role === "mentee"}
-            onBrowseMentors={handleBrowseMentors}
+            isStudent={currentUser?.role === "student"}
+            onBrowse={currentUser?.role === "student" ? handleBrowseMentors : handleBrowseStudents}
           />
-          {showAllMentors && (
+          {showAllUsers && (
             <div className="p-3 border-top bg-light chat-list-footer">
               <small className="text-muted">
                 <i className="fas fa-info-circle me-1"></i>
-                You can message any mentor. If they accept, they'll appear in "My Mentors".
+                {currentUser?.role === "student" 
+                  ? "You can message any mentor. If they accept your mentorship request, they'll appear in 'My Mentors'."
+                  : "You can message any student. If they send you a mentorship request and you accept, they'll appear in 'My Students'."}
               </small>
             </div>
           )}
@@ -315,7 +401,7 @@ const ChatPage = () => {
                     <i className="fas fa-redo me-1"></i>Retry Loading
                   </button>
                 )}
-                {myId && contacts.length === 0 && currentUser?.role === "mentee" && (
+                {myId && contacts.length === 0 && currentUser?.role === "student" && (
                   <div className="mt-3">
                     <p className="small mb-2">No mentors yet? Browse available mentors!</p>
                     <button 
@@ -323,6 +409,17 @@ const ChatPage = () => {
                       onClick={handleBrowseMentors}
                     >
                       <i className="fas fa-search me-1"></i>Browse Mentors
+                    </button>
+                  </div>
+                )}
+                {myId && contacts.length === 0 && currentUser?.role === "mentor" && (
+                  <div className="mt-3">
+                    <p className="small mb-2">No students yet? Browse available students!</p>
+                    <button 
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={handleBrowseStudents}
+                    >
+                      <i className="fas fa-search me-1"></i>Browse Students
                     </button>
                   </div>
                 )}

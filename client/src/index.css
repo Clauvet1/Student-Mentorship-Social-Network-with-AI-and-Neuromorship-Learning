@@ -325,7 +325,7 @@ h6 span{
   background-color: var(--background-color);
 }
 
-/* For mentee Profile */
+/* For student Profile */
 
 .mentee-profile-container {
   width: 80%;
@@ -548,7 +548,7 @@ textarea {
 }
 
 
-/* For Mentees */
+/* For Students */
 
 
 .mentees-list {

@@ -27,7 +27,12 @@ const API_CONFIG = {
     
     // Message endpoints
     sendMessage: "/api/messages/send",
-    getMessages: (user1, user2) => `/api/messages/${user1}/${user2}`
+    getMessages: (user1, user2) => `/api/messages/${user1}/${user2}`,
+    
+    // AI Chat Assistant endpoints
+    aiChat: "/api/ai/chat",
+    aiContext: "/api/ai/context",
+    aiClearHistory: "/api/ai/clear-history"
   }
 };
 

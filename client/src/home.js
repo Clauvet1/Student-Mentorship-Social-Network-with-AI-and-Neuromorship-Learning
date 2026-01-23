@@ -39,19 +39,19 @@ const Home = () => {
                         <h2 className='fw-bold my-4'>Student mentorship matching</h2>
                         <div className="line">
                         <FontAwesomeIcon className='icon-large' icon={faLanguage} />
-                        <p>Language will be used to match mentee to a suitable mentor</p>
+                        <p>Language will be used to match student to a suitable mentor</p>
                         </div>
                         <div className="line">
                         <FontAwesomeIcon className='icon-large' icon={faMapLocation} />
-                        <p>The geographical location of both the mentee and mentor is considered when matching</p>
+                        <p>The geographical location of both the student and mentor is considered when matching</p>
                         </div>
                         <div className="line">
                         <FontAwesomeIcon className='icon-large' icon={faCalendarWeek} />
-                        <p>Mentors schedule is considered when matching them with mentee, that is a mentor is available time is more likely to be a match</p>
+                        <p>Mentors schedule is considered when matching them with student, that is a mentor is available time is more likely to be a match</p>
                         </div>
                         <div className="line">
                         <FontAwesomeIcon className='icon-large' icon={faCircleNodes} />
-                        <p>Both Mentee's and Mentor's shared interest are considered during the matching</p>
+                        <p>Both Student's and Mentor's shared interest are considered during the matching</p>
                         </div>
                     </div>
                     <div className="col-lg-6 col-md-6 col-sm-12">
@@ -72,11 +72,11 @@ const Home = () => {
                         <h2 className='fw-bold my-4'>Message your mentor</h2>
                         <div className="line">
                         <FontAwesomeIcon className='icon-large' icon={faFacebookMessenger} />
-                        <p>Send messages to either mentees or mentors. Access yoyr messages at any time from your desktop or mobile device</p>
+                        <p>Send messages to either students or mentors. Access your messages at any time from your desktop or mobile device</p>
                         </div>
                         <div className="line">
                         <FontAwesomeIcon className='icon-large' icon={faCheckDouble} />
-                        <p>Share an agenda with topic to discuss, also share resources with mentees</p>
+                        <p>Share an agenda with topic to discuss, also share resources with students</p>
                         </div>
                     </div>
                 </div>

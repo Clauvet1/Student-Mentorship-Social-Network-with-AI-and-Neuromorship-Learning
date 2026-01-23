@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getApiUrl } from "./config";
 import loginImage from "./assets/images/female.png";
 
 const Signup = () => {
@@ -16,7 +17,7 @@ const Signup = () => {
 
     const userData = { name, email, password, role, specialty, bio };
 
-    const res = await fetch("http://localhost:3001/api/signup", {
+    const res = await fetch(getApiUrl("/api/signup"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
@@ -39,7 +40,7 @@ const Signup = () => {
 
             <div className="user-type">
               <button className={role==="mentor"?"active":""} onClick={()=>setRole("mentor")}>Mentor</button>
-              <button className={role==="mentee"?"active":""} onClick={()=>setRole("mentee")}>Mentee</button>
+<button className={role==="student"?"active":""} onClick={()=>setRole("student")}>Student</button>
             </div>
 
             <form onSubmit={handleSubmit}>

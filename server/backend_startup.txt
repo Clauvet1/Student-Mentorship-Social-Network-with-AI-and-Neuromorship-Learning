@@ -11,3 +11,5 @@ RUN###
 4.show collections  #to show tables
 5.db.messages.find()    #to see data in collections
 6.db.messages.find().pretty()   #can petty is data's to long
+
+The AI chat will work once Ollama is running locally on port 11434. 

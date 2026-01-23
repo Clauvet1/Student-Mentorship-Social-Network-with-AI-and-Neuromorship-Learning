@@ -14,10 +14,8 @@ const Chat = ({ myId, otherUser, onMessageSent }) => {
   // Fetch messages when user is selected
   useEffect(() => {
     if (myId && otherUser) {
-      // Use _id if available, otherwise fall back to id
       const otherUserId = otherUser._id || otherUser.id;
       if (!otherUserId) {
-        console.error("No user ID found:", otherUser);
         setError("Invalid user ID");
         setLoading(false);
         return;
@@ -45,12 +43,9 @@ const Chat = ({ myId, otherUser, onMessageSent }) => {
       };
 
       fetchMessages();
-      
-      // Set up auto-refresh every 5 seconds
       refreshIntervalRef.current = setInterval(fetchMessages, 5000);
     }
     
-    // Cleanup interval on unmount or when user changes
     return () => {
       if (refreshIntervalRef.current) {
         clearInterval(refreshIntervalRef.current);
@@ -72,24 +67,17 @@ const Chat = ({ myId, otherUser, onMessageSent }) => {
   }, [text]);
 
   const sendMessage = async () => {
-    console.log("sendMessage called"); // Debug log
-    console.log("Text:", text); // Debug log
-    console.log("myId:", myId); // Debug log
-    console.log("otherUser:", otherUser); // Debug log
-    
-    if (!text.trim() || !myId || !otherUser) {
-      console.log("Missing required data"); // Debug log
-      return;
-    }
+    if (!text.trim() || !myId || !otherUser) return;
 
-    // Use _id if available, otherwise fall back to id
     const otherUserId = otherUser._id || otherUser.id;
     if (!otherUserId) {
-      console.error("No user ID found:", otherUser);
+      setError("Invalid user ID for recipient");
       return;
     }
 
     setSending(true);
+    setError(null);
+    
     try {
       const res = await fetch(getApiUrl("/api/messages/send"), {
         method: "POST",
@@ -102,31 +90,26 @@ const Chat = ({ myId, otherUser, onMessageSent }) => {
       });
 
       if (!res.ok) {
-        const error = await res.json().catch(() => ({}));
-        console.error("Error sending message:", error);
-        setError(error.detail || "Failed to send message");
+        const errorData = await res.json().catch(() => ({}));
+        setError(errorData.detail || "Failed to send message");
         return;
       }
 
       const savedMsg = await res.json();
-      console.log("Message saved:", savedMsg); // Debug log
       setMessages(prev => [...prev, savedMsg]);
       setText("");
-      setError(null);
       
-      // Reset textarea height
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto";
         textareaRef.current.focus();
       }
       
-      // Refresh conversations to update last message preview
       if (onMessageSent) {
         onMessageSent();
       }
     } catch (error) {
       console.error("Error in sendMessage:", error);
-      setError("Failed to send message. Please try again.");
+      setError("Failed to send message. Please check your connection and try again.");
     } finally {
       setSending(false);
     }
@@ -136,16 +119,6 @@ const Chat = ({ myId, otherUser, onMessageSent }) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
-    }
-    
-    // Auto-resize textarea
-    if (e.key !== "Enter") {
-      setTimeout(() => {
-        if (textareaRef.current) {
-          textareaRef.current.style.height = "auto";
-          textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 120) + "px";
-        }
-      }, 0);
     }
   };
 
@@ -157,7 +130,6 @@ const Chat = ({ myId, otherUser, onMessageSent }) => {
   const handleRetry = () => {
     setError(null);
     setLoading(true);
-    // Force re-fetch by toggling a dummy state
     const otherUserId = otherUser._id || otherUser.id;
     fetch(getApiUrl(`/api/messages/${myId}/${otherUserId}`), {
       headers: getAuthHeaders()
@@ -171,7 +143,6 @@ const Chat = ({ myId, otherUser, onMessageSent }) => {
         setError(null);
       })
       .catch(err => {
-        console.error("Error fetching messages:", err);
         setError("Failed to load messages");
       })
       .finally(() => {
@@ -321,3 +292,4 @@ function formatTime(timestamp) {
 }
 
 export default Chat;
+

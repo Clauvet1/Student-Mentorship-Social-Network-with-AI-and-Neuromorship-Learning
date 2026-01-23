@@ -1,6 +1,6 @@
 import React from "react";
 
-const ChatList = ({ contacts, onSelect, selectedUser, isMentee, onBrowseMentors }) => {
+const ChatList = ({ contacts, onSelect, selectedUser, isStudent, onBrowse }) => {
   // Helper to get consistent contact ID
   const getContactId = (contact) => contact._id || contact.id;
 
@@ -12,20 +12,20 @@ const ChatList = ({ contacts, onSelect, selectedUser, isMentee, onBrowseMentors 
             <i className="fas fa-users fa-3x text-muted"></i>
           </div>
           <h6 className="text-muted mb-2">
-            {isMentee ? "No mentors yet" : "No connections yet"}
+            {isStudent ? "No mentors yet" : "No students yet"}
           </h6>
           <p className="text-muted small mb-3">
-            {isMentee 
+            {isStudent 
               ? "You haven't connected with any mentors. Browse available mentors to start chatting!"
-              : "Request mentorship to start connecting with people."}
+              : "You can message any student directly. Browse students to start chatting!"}
           </p>
-          {isMentee && (
+          {onBrowse && (
             <button 
               className="btn btn-sm btn-primary"
-              onClick={onBrowseMentors}
+              onClick={onBrowse}
             >
               <i className="fas fa-search me-1"></i>
-              Browse Mentors
+              {isStudent ? "Browse Mentors" : "Browse Students"}
             </button>
           )}
         </div>
@@ -80,6 +80,19 @@ const ChatList = ({ contacts, onSelect, selectedUser, isMentee, onBrowseMentors 
           );
         })}
       </div>
+      
+      {/* Browse Button - Shown when there are contacts too */}
+      {onBrowse && contacts.length > 0 && (
+        <div className="p-3 border-top bg-light">
+          <button 
+            className="btn btn-outline-primary w-100"
+            onClick={onBrowse}
+          >
+            <i className="fas fa-search me-2"></i>
+            {isStudent ? "Browse More Mentors" : "Browse More Students"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

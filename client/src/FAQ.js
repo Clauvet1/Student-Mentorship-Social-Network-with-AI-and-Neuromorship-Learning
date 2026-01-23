@@ -6,7 +6,7 @@ const FAQ = () => {
       },
       {
         question: 'How can I become a mentor?',
-        answer: 'To become a mentor, you can sign up on our platform and create a mentor profile. Our team will review your application and match you with suitable mentees.'
+        answer: 'To become a mentor, you can sign up on our platform and create a mentor profile. Our team will review your application and match you with suitable students.'
       },
       {
         question: 'How do I find a mentor?',
@@ -18,7 +18,7 @@ const FAQ = () => {
       },
       {
         question: 'How long does the mentorship program last?',
-        answer: 'The duration of the mentorship program varies depending on the needs of the mentee and the availability of the mentor, but typically lasts for a semester or academic year.'
+        answer: 'The duration of the mentorship program varies depending on the needs of the student and the availability of the mentor, but typically lasts for a semester or academic year.'
       },
       {
         question: 'Can I have more than one mentor at a time?',
@@ -33,12 +33,12 @@ const FAQ = () => {
         answer: 'Mentors can provide academic guidance, career advice, personal development tips, networking opportunities, and emotional support to help you succeed in your academic and personal life.'
       },
       {
-        question: 'How are mentors matched with mentees?',
-        answer: 'Mentors and mentees are matched based on their interests, goals, academic backgrounds, and availability. Our team carefully reviews applications to ensure successful mentor-mentee matches.'
+        question: 'How are mentors matched with students?',
+        answer: 'Mentors and students are matched based on their interests, goals, academic backgrounds, and availability. Our team carefully reviews applications to ensure successful mentor-student matches.'
       },
       {
-      question: 'Can I switch mentors if the relationship is not working out?',
-      answer:' If you feel that the relationship with your mentor is not productive, you can request a mentor change by contacting our support team. We will work to find a better match for you.'
+        question: 'Can I switch mentors if the relationship is not working out?',
+        answer: 'If you feel that the relationship with your mentor is not productive, you can request a mentor change by contacting our support team. We will work to find a better match for you.'
       },
       {
         question: 'How can I provide feedback about my mentorship experience?',

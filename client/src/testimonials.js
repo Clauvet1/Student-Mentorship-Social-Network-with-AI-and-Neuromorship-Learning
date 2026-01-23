@@ -5,7 +5,7 @@ const Testimonials = () => {
             <div className="tContent1 pt-4">
                 <center>
                     <h4>Testimonials</h4>
-                    <h1 className="fw-bold my-4">Success Stories From Previous Mentees</h1>
+                    <h1 className="fw-bold my-4">Success Stories From Previous Students</h1>
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat neque ex sunt corrupti, minus sint asperiores pariatur quasi alias itaque porro veniam, quo aperiam quibusdam velit saepe, vel in incidunt.
                         Lorem ipsum dolor sit amet consecetur adipisicing elit. Placeat aspernatur beatae cumque, libero vero iusto repellat nam dolores perspiciatis voluptas ratione quod pariatur repudiandae magnam. Aliquam ullam quasi in quam.
                     </p>

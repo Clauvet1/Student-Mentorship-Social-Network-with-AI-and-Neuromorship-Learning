@@ -8,9 +8,11 @@ import {
   faVoicemail,
   faEdit,
   faPeopleArrows,
+  faComments,
 } from "@fortawesome/free-solid-svg-icons";
 import amIMG from "../assets/images/female.png";
 import { useNavigate } from "react-router-dom";
+import { getApiUrl } from "../config";
 
 const MentorProfile = () => {
   const [userData, setUserData] = useState("");
@@ -29,13 +31,13 @@ const MentorProfile = () => {
       //     console.log("token missing");
       // }
 
-      const response = await fetch("http://localhost:3001/api/mentor-profile", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(getApiUrl("/api/mentor-profile"), {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+              });
 
       if (!response.ok) {
         console.log("Response error");
@@ -60,7 +62,7 @@ const MentorProfile = () => {
           <div className="col-lg-6">
             <h3 className="fw-bold">{userData.fullName}</h3>
             <h6>
-              Student at {userData.school} <br />
+              Lecturer at {userData.school} <br />
               <span>{userData.department}</span>
             </h6>
             <div className="mt-4">
@@ -98,6 +100,30 @@ const MentorProfile = () => {
           <h3 className="fw-bold">Bio</h3>
           <p>{userData.bio}</p>
         </div>
+        {/* Message Students Button */}
+        <div className="messageMentor mt-4">
+          <div className="row">
+            <div className="col-lg-2">
+              <FontAwesomeIcon
+                className="icon-large w-100 mt-3 mb-2"
+                icon={faComments}
+              />
+            </div>
+            <div className="col-lg-6">
+              <h4>Message Students</h4>
+              <p>Chat with your mentees and students</p>
+            </div>
+            <div className="col-lg-4">
+              <Link
+                id="messagebtn"
+                className="btn rounded-5 text-white mt-3 ms-4"
+                to="/chat_page"
+              >
+                Message Students
+              </Link>
+            </div>
+          </div>
+        </div>
         <div className="messageMentor">
           <div className="row">
             <div className="col-lg-2">
@@ -131,7 +157,7 @@ const MentorProfile = () => {
             </div>
             <div className="col-lg-6">
               <h4>View Mentees</h4>
-              <p>Yo can all your mentees here</p>
+              <p>You can all your mentees here</p>
             </div>
             <div className="col-lg-4">
               <Link

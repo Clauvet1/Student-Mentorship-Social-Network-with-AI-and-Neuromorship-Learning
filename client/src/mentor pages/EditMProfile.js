@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getApiUrl } from "../config";
 
 const EditMProfile = () => {
   const [fullName, setFullName] = useState("");
@@ -35,8 +36,8 @@ const EditMProfile = () => {
       //    navigate("/login");
       //     console.log("token missing");
       // }
-      const response = await fetch("http://localhost:3001/api/editMProfile", {
-        method: "POST",
+const response = await fetch(getApiUrl("/api/editMentorProfile"), {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

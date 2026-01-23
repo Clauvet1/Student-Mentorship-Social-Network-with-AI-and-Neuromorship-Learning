@@ -4,103 +4,103 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import profileA from '../assets/images/consultancy.png';
 import profileB from '../assets/images/mentorship.png';
-import { useNavigate } from 'react-router-dom';
-import { Modal, Button } from 'react-bootstrap';
+import { getApiUrl } from '../config';
 
 const menteeImages = [profileA, profileB];
 
 const Mentees = () => {
-  const [menteeData, setMenteeData] = useState([]);
+  const [studentData, setStudentData] = useState([]);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
-  const token = localStorage.getItem('token');
-  const [showAlert, setShowAlert] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // if (!token) {
-    //   navigate('./login');
-    // }
-    const fetchMenteeData = async () => {
+    const fetchStudentData = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/mentees');
+        const token = localStorage.getItem('token');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+        
+        console.log("Fetching students from:", getApiUrl("/api/users"));
+        
+        const response = await fetch(getApiUrl("/api/users"), {
+          headers: headers,
+        });
+        
         if (!response.ok) {
-          throw new Error('Unable to access the endpoint');
+          throw new Error('Unable to fetch students: ' + response.status);
         }
         const data = await response.json();
-        setMenteeData(data);
+        
+        console.log("API Response:", data);
+        console.log("First student sample:", data[0]);
+        
+        // Filter to only show students/mentees
+        const students = data
+          .filter(user => user.role === 'student' || user.role === 'mentee')
+          .map(user => {
+            console.log("Student ID:", user._id, "Type:", typeof user._id);
+            return {
+              ...user,
+              // Use _id which is returned as string from the API
+              studentId: user._id
+            };
+          });
+        
+        console.log("Filtered students:", students);
+        setStudentData(students);
       } catch (error) {
-        console.error('Error fetching mentee', error);
+        console.error('Error fetching students:', error);
         setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchMenteeData();
-  }, [navigate, token]);
+    fetchStudentData();
+  }, []);
 
-  const addMentee = async (menteeId) => {
-    try {
-      const response = await fetch(`http://localhost:3001/api/add-mentee/${menteeId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Unable to add mentee');
-      }
-      console.log('Mentee added successfully!');
-      setShowAlert(true);
-    } catch (error) {
-      console.error('Error adding mentee:', error);
-    }
-  };
+  if (loading) {
+    return <div className="text-center p-4">Loading students...</div>;
+  }
 
-  const handleCloseAlert = () => {
-    setShowAlert(false);
-  };
+  if (error) {
+    return <div className="alert alert-danger">{error}</div>;
+  }
 
   return (
     <div className="main">
-      {error && <div className="alert alert-danger">{error}</div>}
       <div className="mentees-list">
         <div className="row">
-          {menteeData.map((mentee) => (
-            <div className="col-lg-4 col-md-6 col-sm-12 mb-4" key={mentee.id}>
+          {studentData.map((student) => (
+            <div className="col-lg-4 col-md-6 col-sm-12 mb-4" key={student.studentId || Math.random()}>
               <div className="mentee-card">
                 <div className="mentee-image">
-                  <img className="w-50 h-150" src={menteeImages[Math.floor(Math.random() * menteeImages.length)]} alt={mentee.fullName} />
+                  <img className="w-50 h-150" src={menteeImages[Math.floor(Math.random() * menteeImages.length)]} alt={student.fullName || student.name} />
                 </div>
                 <div className="mentee-content">
-                  <h4 className=" fw-bold mb-3">{mentee.fullName}</h4>
-                  <h5 className="mb-3 mColor">{mentee.speciality}</h5>
-                  <p className="mb-3">{mentee.bio}</p>
-                  <Link to={`/menteeProfileView/${mentee.id}`}>
+                  <h4 className="fw-bold mb-3">{student.fullName || student.name}</h4>
+                  <h5 className="mb-3 mColor">{student.specialty || 'No specialty'}</h5>
+                  <p className="mb-3">{student.bio || 'No bio available'}</p>
+                  <Link to={`/studentProfileView/${student.studentId}`}>
                     <button id='mView' className='btn text-white rounded-5 px-4 mt-2'>View Profile</button>
                   </Link>
-                  <Link className="btn btn-secondary rounded-5 text-white ms-2 mt-2 ml-3" to={`/message/${mentee.id}`}><FontAwesomeIcon icon={faEnvelope} /> message</Link>
-                  <button id='messagebtn' className="btn rounded-5 text-white mt-2 ms-2" onClick={() => addMentee(mentee.id)}>Add Mentee</button>
+                  <Link className="btn btn-secondary rounded-5 text-white ms-2 mt-2 ml-3" to={`/chat_page?user=${student.studentId}`}>
+                    <FontAwesomeIcon icon={faEnvelope} /> Message
+                  </Link>
                 </div>
               </div>
             </div>
           ))}
         </div>
+        {studentData.length === 0 && (
+          <div className="text-center p-4">
+            <p>No students found.</p>
+            <p>Check browser console for API response details.</p>
+          </div>
+        )}
       </div>
-      {showAlert && (
-        <Modal show={showAlert} onHide={handleCloseAlert}>
-          <Modal.Header closeButton>
-            <Modal.Title>Mentee Added</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p>Mentee added successfully!</p>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button id='messagebtn' className="btn rounded-5 text-white mt-3 ms-4" onClick={handleCloseAlert}>Close</Button>
-          </Modal.Footer>
-        </Modal>
-      )}
     </div>
   );
 };
 
 export default Mentees;
+
