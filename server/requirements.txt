@@ -1,0 +1,27 @@
+# FastAPI and ASGI
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+
+# Database
+pymongo==4.6.1
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Configuration
+python-dotenv==1.0.0
+
+# OpenAI-compatible client for Ollama
+openai==1.12.0
+
+# HTTP client (for health checks)
+httpx==0.26.0
+
+# CORS (built into FastAPI - no extra package needed)
+# fastapi-cors is not a real package - FastAPI has built-in CORS support
+# Use: from fastapi.middleware.cors import CORSMiddleware
+
+# Email validation for Pydantic
+email-validator==2.1.0
+

@@ -13,3 +13,65 @@ RUN###
 6.db.messages.find().pretty()   #can petty is data's to long
 
 The AI chat will work once Ollama is running locally on port 11434. 
+sudo docker compose up -d backend client
+Access:
+
+Frontend: http://localhost:3000
+Backend API: http://localhost:3001
+The Docker containers will connect to your local MongoDB on port 27017 and Ollama on port 11434.
+
+Modified docker-compose.yml
+1 file changed
++22
+-26
+
+
+docker-compose.yml
+
++22
+-26
+
+
+so how do i run the project now
+
+The user wants to know how to run the project now. Let me provide clear step-by-step instructions.
+
+
+Task Completed
+How to Run the Project Now
+Step 1: Start Local Services
+Terminal 1 - Start MongoDB:
+
+
+mongod
+Terminal 2 - Start Ollama:
+
+
+ollama serve
+Step 2: Start Docker Containers (Backend + Client)
+Terminal 3:
+
+
+cd /home/clauvet/school/project/Student-Mentorship-Social-Network-with-AI-and-Neuromorship-Learning
+
+sudo docker compose up -d backend client
+
+#For Docker
+# Build and start the containers
+sudo docker compose up -d --build
+
+# View logs to check status
+docker compose logs -f
+
+# Stop all services
+docker compose down
+
+# Restart services
+docker compose restart
+
+# View logs
+docker compose logs -f backend
+docker compose logs -f client
+
+# Check running containers
+docker compose ps

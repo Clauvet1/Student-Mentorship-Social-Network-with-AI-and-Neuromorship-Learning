@@ -1,0 +1,63 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+*.log
+.pytest_cache
+.coverage
+htmlcov
+venv/
+env/
+.venv/
+
+# Node.js
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# React
+client/node_modules/
+client/build/
+
+# OS
+.DS_Store
+Thumbs.db
+*.bak
+*~
+
+# Docker
+docker-compose.override.yml
+.docker/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Documentation (optional, keep if needed)
+*.md
+!README*.md
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+

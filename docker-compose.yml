@@ -1,0 +1,112 @@
+services:
+  # MongoDB Database - Using local installation (not running in Docker)
+  # Uncomment below if you want to run MongoDB in Docker instead
+  # mongodb:
+  #   image: mongo:7
+  #   container_name: mentorship-mongodb
+  #   restart: unless-stopped
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongodb_data:/data/db
+  #   environment:
+  #     - MONGO_INITDB_DATABASE=mentorship_db
+  #   healthcheck:
+  #     test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+  #     interval: 10s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 40s
+
+  # Ollama AI Service - Using local installation (not running in Docker)
+  # Uncomment below if you want to run Ollama in Docker instead
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: mentorship-ollama
+  #   restart: unless-stopped
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama_data:/root/.ollama
+  #   environment:
+  #     - OLLAMA_HOST=0.0.0.0:11434
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: all
+  #             capabilities: [gpu]
+  #   cap_add:
+  #     - SYS_RESOURCE
+  #   healthcheck:
+  #     test: curl -f http://localhost:11434/api/version || exit 1
+  #   interval: 30s
+  #   timeout: 10s
+  #   retries: 3
+  #   start_period: 30s
+
+  # Backend API Server
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: mentorship-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    # Use host network mode to access local services (MongoDB, Ollama) via localhost
+    network_mode: host
+    environment:
+      - MONGO_URI=mongodb://127.0.0.1:27017
+      - MONGODB_URI=mongodb://127.0.0.1:27017
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-your-super-secret-jwt-key-change-in-production}
+      - JWT_ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+      - OLLAMA_BASE_URL=http://127.0.0.1:11434/v1
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-phi}
+    env_file:
+      - server/.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: curl -f http://localhost:3001/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Frontend Client
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    container_name: mentorship-client
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=http://localhost:3001
+
+  # Optional: Admin Mongo Express for database management
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mentorship-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongodb
+    environment:
+      - ME_CONFIG_MONGODB_URL=mongodb://mongodb:27017
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin123
+    profiles:
+      - monitoring
+
+networks:
+  default:
+    name: mentorship-network
+
